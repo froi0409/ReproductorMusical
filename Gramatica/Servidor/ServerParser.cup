@@ -1,7 +1,102 @@
+package com.froi.pruebagramaticareproductor.gramatica;
+
+import java_cup.runtime.*;
+
 
 class ServerParser;
 parser code{:
 
+    public ServerParser(ServerLexer lexer) {
+        super(lexer);
+    }
+      public void report_error(String message, Object info) {
+        System.out.println("reporterror");
+    }
+    public void report_fatal_error(String message, Object info) {
+        System.out.println("reportfatal");
+    }
+    public void syntax_error(Symbol cur_token) {
+        System.out.println("syntaxerr " + symbl_name_from_id(cur_token.sym) + " " + cur_token.left + " - " + cur_token.right);
+    }
+    protected int error_sync_size() {
+        return 1;
+    }
+
 :}
 
+/*-----Declaraciń de Simbolos Terminales y No Terminales-----*/
+//Declaracion de Simbolos Terminales//
+//Palabras reservadas
+terminal PR_PISTA, PR_ENTERO, PR_DOBLE, PR_BOOLEAN, PR_CARACTER, PR_CADENA, PR_VAR, PR_KEEP, PR_SI, PR_SINO, PR_SWITCH, PR_CASO, PR_DEFAULT, PR_PARA, PR_MIENTRAS, PR_HACER, PR_RETORNA, PR_CONTINUAR;
+//funciones y procedimientos nativos del lenguaje
+terminal PR_REPRODUCIR, PR_ESPERAR, PR_ORDENAR, PR_SUMARIZAR, PR_LONGITUD, PR_MENSAJE, PR_PRINCIPAL;
+//Lenguaje de definicion de listas de reproduccion
+terminal PR_LISTA, PR_RANDOM, PR_CIRCULAR, PR_PISTAS;
+//Simbolos
+terminal CORA, CORC, PARA, PARC, COMA, PUNTO_COMA, TABULACION, INDENTACION, DENDENTACION;
+//Operadores Relacionales
+terminal IGUALACION, DIFERENCIACION, MAYOR_QUE, MENOR_QUE, MAYOR_IGUAL, MENOR_IGUAL, NULO;
+//Operadores Lógicos
+terminal AND, NAND, NOR, XOR, NOT;
+//Operadores Aritmeticos
+terminal SUMA, RESTA, MULTIPLICACION, DIVISION, MODULO, POTENCIA;
+//Operadores de Incremento-Decremento
+terminal SUMA_SIMPLIFICADA, SUMA_EN_UNO, RESTA_EN_UNO;
+//Asignacion de Valores
+terminal TRUE, FALSE;
+//Valores de Apoyo
+terminal ALFANUMERICO;
+//Saltos de linea
+terminal SALTO;
 
+
+//Declaracion de Simbolos No Terminales//
+non terminal inicio;
+//Pistas
+non terminal identificacion_pista, herencia_pistas;
+//cuerpo del lenguaje
+non terminal cuerpo_pista, instruccion_tabulada, instruccion;
+//instrucciones
+non terminal declaracion_variable, instruccion_keep, tipo, variables;
+
+//INICIO DE LA GRAMATICA//
+start with inicio;
+
+inicio ::=  inicio identificacion_pista
+            | identificacion_pista
+            ;
+
+identificacion_pista ::=    PR_PISTA ALFANUMERICO herencia_pistas SALTO INDENTACION cuerpo_pista    {:System.out.println("Se encontro una pista");:}
+                            ;
+
+herencia_pistas ::=     ALFANUMERICO        {:System.out.println("Alfanumerico");:}
+                        |                   {:System.out.println("Alfanumerico");:}
+                        ;
+
+cuerpo_pista ::=    cuerpo_pista SALTO instruccion
+                    | instruccion
+                    ;
+
+instruccion_tabulada ::=    instruccion
+                            ;
+
+instruccion ::=     declaracion_variable
+                    ;
+
+declaracion_variable ::=    instruccion_keep PR_VAR tipo variables
+                            ;
+
+instruccion_keep ::=    PR_KEEP
+                        | 
+                        ;
+
+tipo ::=    PR_ENTERO
+            | PR_DOBLE
+            | PR_BOOLEAN
+            | PR_CARACTER
+            | PR_CADENA
+            ;
+
+variables ::=   variables ALFANUMERICO
+                | ALFANUMERICO
+                ; 
