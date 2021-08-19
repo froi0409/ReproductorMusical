@@ -40,6 +40,7 @@ Ignore = {WS}
 
 //Palabras reservadas//
 PR_PISTA = "Pista" | "pista"
+PR_EXTIENDE = "Extiende" | "extiende"
 PR_ENTERO = "entero" | "Entero"
 PR_DOBLE = "doble" | "Doble"
 PR_BOOLEAN = "boolean" | "Boolean"
@@ -82,6 +83,7 @@ COMA = ","
 PUNTO_COMA = ";"
 
 //Operadores Relacionales//
+IGUAL = "="
 IGUALACION = "=="
 DIFERENCIACION = "!="
 MAYOR_QUE = ">"
@@ -116,6 +118,7 @@ FALSE = "False" | "false"
 
 //Valores de Apoyo//
 ALFANUMERICO = ([a-zA-Z] | [0-9])+
+NUMERO = [0-9]+
 VARIABLE = (([a-zA-Z]) | [0-9] | "_" | "$" | "-")+
 
 //Comentarios//
@@ -132,6 +135,7 @@ COMENTARIO = {COMENTARIO_LINEA} | {COMENTARIO_BLOQUE}
 
     //PALABRAS RESERVADAS//
     {PR_PISTA}                  {System.out.println("PISTA"); return new Symbol(PR_PISTA, yyline+1, yycolumn+1, yytext());}
+    {PR_EXTIENDE}               {System.out.println("EXTIENDE"); return new Symbol(PR_EXTIENDE, yyline+1, yycolumn+1, yytext());}
     {PR_ENTERO}                 {System.out.println("ENTERO"); return new Symbol(PR_ENTERO, yyline+1, yycolumn+1, yytext());}
     {PR_DOBLE}                  {System.out.println("DOBLE"); return new Symbol(PR_DOBLE, yyline+1, yycolumn+1, yytext());}
     {PR_BOOLEAN}                {System.out.println("BOOLEAN"); return new Symbol(PR_BOOLEAN, yyline+1, yycolumn+1, yytext());}
@@ -189,6 +193,7 @@ COMENTARIO = {COMENTARIO_LINEA} | {COMENTARIO_BLOQUE}
                                 }
 
     //OPERADORES RELACIONALES//
+    {IGUAL}                     {System.out.println("IGUAL"); return new Symbol(IGUAL, yyline+1, yycolumn+1, yytext());}
     {IGUALACION}                {System.out.println("IGUALACION"); return new Symbol(IGUALACION, yyline+1, yycolumn+1, yytext());}
     {DIFERENCIACION}            {System.out.println("DIFERENCIACION"); return new Symbol(DIFERENCIACION, yyline+1, yycolumn+1, yytext());}
     {MAYOR_QUE}                 {System.out.println("MAYOR_QUE"); return new Symbol(MAYOR_QUE, yyline+1, yycolumn+1, yytext());}
@@ -222,6 +227,7 @@ COMENTARIO = {COMENTARIO_LINEA} | {COMENTARIO_BLOQUE}
     {FALSE}                     {System.out.println("FALSE"); return new Symbol(FALSE, yyline+1, yycolumn+1, yytext());}
 
     //Valores de Apoyo
+    {NUMERO}                    {System.out.println("NUMERO"); return new Symbol(NUMERO, yyline+1, yycolumn+1, yytext());}
     {ALFANUMERICO}              {System.out.println("ALFANUMERICO"); return new Symbol(ALFANUMERICO, yyline+1, yycolumn+1, yytext());}
 
     //SALTOS DE LINEA//

@@ -27,7 +27,7 @@ parser code{:
 /*-----Declaraciń de Simbolos Terminales y No Terminales-----*/
 //Declaracion de Simbolos Terminales//
 //Palabras reservadas
-terminal PR_PISTA, PR_ENTERO, PR_DOBLE, PR_BOOLEAN, PR_CARACTER, PR_CADENA, PR_VAR, PR_KEEP, PR_SI, PR_SINO, PR_SWITCH, PR_CASO, PR_DEFAULT, PR_PARA, PR_MIENTRAS, PR_HACER, PR_RETORNA, PR_CONTINUAR;
+terminal PR_PISTA, PR_EXTIENDE, PR_ENTERO, PR_DOBLE, PR_BOOLEAN, PR_CARACTER, PR_CADENA, PR_VAR, PR_KEEP, PR_SI, PR_SINO, PR_SWITCH, PR_CASO, PR_DEFAULT, PR_PARA, PR_MIENTRAS, PR_HACER, PR_RETORNA, PR_CONTINUAR;
 //funciones y procedimientos nativos del lenguaje
 terminal PR_REPRODUCIR, PR_ESPERAR, PR_ORDENAR, PR_SUMARIZAR, PR_LONGITUD, PR_MENSAJE, PR_PRINCIPAL;
 //Lenguaje de definicion de listas de reproduccion
@@ -35,7 +35,7 @@ terminal PR_LISTA, PR_RANDOM, PR_CIRCULAR, PR_PISTAS;
 //Simbolos
 terminal CORA, CORC, PARA, PARC, COMA, PUNTO_COMA, TABULACION, INDENTACION, DENDENTACION;
 //Operadores Relacionales
-terminal IGUALACION, DIFERENCIACION, MAYOR_QUE, MENOR_QUE, MAYOR_IGUAL, MENOR_IGUAL, NULO;
+terminal IGUAL, IGUALACION, DIFERENCIACION, MAYOR_QUE, MENOR_QUE, MAYOR_IGUAL, MENOR_IGUAL, NULO;
 //Operadores Lógicos
 terminal AND, NAND, NOR, XOR, NOT;
 //Operadores Aritmeticos
@@ -45,7 +45,7 @@ terminal SUMA_SIMPLIFICADA, SUMA_EN_UNO, RESTA_EN_UNO;
 //Asignacion de Valores
 terminal TRUE, FALSE;
 //Valores de Apoyo
-terminal ALFANUMERICO;
+terminal NUMERO, ALFANUMERICO;
 //Saltos de linea
 terminal SALTO;
 
@@ -53,11 +53,19 @@ terminal SALTO;
 //Declaracion de Simbolos No Terminales//
 non terminal inicio;
 //Pistas
-non terminal identificacion_pista, herencia_pistas;
+non terminal identificacion_pista, herencia_pistas, herencia;
 //cuerpo del lenguaje
 non terminal cuerpo_pista, instruccion_tabulada, instruccion;
 //instrucciones
-non terminal declaracion_variable, instruccion_keep, tipo, variables;
+non terminal declaracion_variable, instruccion_keep, tipo, variables, asignacion_valores;
+//declaracion de procedimiento
+non terminal declaracion_procedimiento, tipo_procedimientos, parametros_procedimiento, cuerpo_procedimiento, instrucciones_proceso, instruccion_proceso;
+//valores fundamentales
+non terminal operacion_valor, valor_general;
+
+//PRECEDENCIA//
+precedence left SUMA, RESTA;
+precedence left MULTIPLICACION, DIVISION;
 
 //INICIO DE LA GRAMATICA//
 start with inicio;
@@ -66,24 +74,28 @@ inicio ::=  inicio identificacion_pista
             | identificacion_pista
             ;
 
+/*IDENTIFICACIÓN DE LA PISTA*/
 identificacion_pista ::=    PR_PISTA ALFANUMERICO herencia_pistas SALTO INDENTACION cuerpo_pista    {:System.out.println("Se encontro una pista");:}
                             ;
 
-herencia_pistas ::=     ALFANUMERICO        {:System.out.println("Alfanumerico");:}
-                        |                   {:System.out.println("Alfanumerico");:}
+herencia_pistas ::=     PR_EXTIENDE herencia
+                        |
                         ;
 
-cuerpo_pista ::=    cuerpo_pista SALTO instruccion
+herencia ::=    herencia COMA ALFANUMERICO
+                | ALFANUMERICO
+                ;
+
+cuerpo_pista ::=    cuerpo_pista instruccion
                     | instruccion
                     ;
 
-instruccion_tabulada ::=    instruccion
-                            ;
-
-instruccion ::=     declaracion_variable
+instruccion ::=     declaracion_variable SALTO
+                    | declaracion_procedimiento
                     ;
 
-declaracion_variable ::=    instruccion_keep PR_VAR tipo variables
+/*DECLARACIÓN DE VARIABLES*/
+declaracion_variable ::=    instruccion_keep PR_VAR tipo variables asignacion_valores
                             ;
 
 instruccion_keep ::=    PR_KEEP
@@ -97,6 +109,44 @@ tipo ::=    PR_ENTERO
             | PR_CADENA
             ;
 
-variables ::=   variables ALFANUMERICO
+variables ::=   variables COMA ALFANUMERICO
                 | ALFANUMERICO
                 ; 
+
+asignacion_valores ::=  IGUAL operacion_valor
+                        |
+                        ;
+
+/*DECLARACION DE PROCEDIMIENTO*/
+declaracion_procedimiento ::=   instruccion_keep tipo_procedimientos ALFANUMERICO PARA parametros_procedimiento PARC SALTO cuerpo_procedimiento
+                                ;
+
+tipo_procedimientos ::= tipo
+                        |
+                        ;
+
+parametros_procedimiento ::=    ;
+
+cuerpo_procedimiento ::=    INDENTACION instrucciones_proceso DENDENTACION
+                            ;
+
+instrucciones_proceso ::=   instrucciones_proceso instruccion_proceso
+                            | instruccion_proceso
+                            ;
+
+instruccion_proceso ::= declaracion_variable SALTO
+                        ;
+
+
+/*OPERACION DE VALOR*/
+operacion_valor ::= operacion_valor         SUMA            operacion_valor
+                    | operacion_valor       RESTA           operacion_valor
+                    | operacion_valor       MULTIPLICACION  operacion_valor
+                    | operacion_valor       DIVISION        operacion_valor
+                    | valor_general
+                    | PARA operacion_valor PARC
+                    ;
+
+valor_general ::=   ALFANUMERICO
+                    | NUMERO
+                    ;
